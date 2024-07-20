@@ -1,51 +1,52 @@
+"use client";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { Volume2, VolumeX } from "lucide-react";
+import { Button } from "./ui/button";
 
 export default function Hero() {
+    const [isMuted, setIsMuted] = useState(true);
+    const videoRef = useRef(null);
+    const toggleMute = () => {
+        if (videoRef.current) {
+            videoRef.current.muted = !isMuted;
+            setIsMuted(!isMuted);
+        }
+    };
+
     return (
-        <div className="min-h-screen">
-            <nav className="flex justify-between items-center p-6">
-                <div className="flex items-center">
-                    <button className="text-foreground">
-                        <Image width={20} height={20} undefinedhidden="true" alt="menu" src="https://openui.fly.dev/openui/24x24.svg?text=≡" />
-                    </button>
-                </div>
-                <div className="hidden md:flex space-x-8">
-                    <a href="#" className="text-muted-foreground hover:text-foreground">Workouts & Programs</a>
-                    <a href="#" className="text-muted-foreground hover:text-foreground">Nutrition Plans</a>
-                    <a href="#" className="text-muted-foreground hover:text-foreground">Community</a>
-                </div>
-            </nav>
+        <div className="relative min-h-screen overflow-hidden">
+            <video
+            ref={videoRef}
+                autoPlay
+                loop
+                muted={isMuted}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ opacity: 0.55 }} // Full opacity initially
+            >
+                <source src="/gym1.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
 
-            <section className="flex flex-col md:flex-row items-center justify-between p-6 md:p-12">
-                <div className="max-w-lg">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Its Time to Regain Your Fitness</h1>
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center">
+                <div
+                    
+                    className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 md:p-12"
+                >
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">It's Time to Regain Your Fitness</h1>
                     <p className="text-muted-foreground mb-6">Do fitness anywhere and anytime with our training videos</p>
-                    <button className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/80">Try It For Free</button>
+                    <Button className='bg-white bg-opacity-80 text-black px-6 py-3 rounded-lg hover:bg-primary/80' >
+                        Explore Now!
+                    </Button>
                 </div>
-                <div className="mt-8 md:mt-0">
-                    <Image width={20} height={20} src="https://placehold.co/500x400" alt="fitness illustration" className="w-full h-auto" />
-                </div>
-            </section>
-
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 md:p-12">
-                <div className="flex flex-col items-center text-center">
-                    <Image width={20} height={20} src="https://placehold.co/48x48" alt="calendar icon" className="mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Daily Workouts 7 Days a Week</h3>
-                    <p className="text-muted-foreground">Get personalized workouts on a daily basis from professionals.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                    <Image width={20} height={20} src="https://placehold.co/48x48" alt="platform icon" className="mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Access From Any Platform</h3>
-                    <p className="text-muted-foreground">Use all the benefits of the service anywhere and on any device.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                    <Image width={20} height={20} src="https://placehold.co/48x48" alt="community icon" className="mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Guides & Community</h3>
-                    <p className="text-muted-foreground">A private community where we help each other.</p>
-                </div>
-            </section>
+                <button
+                    onClick={toggleMute}
+                    className="absolute top-4 right-4 z-20 bg-white bg-opacity-30 text-black p-2 rounded-full flex items-center justify-center"
+                    style={{ width: '30px', height: '30px' }}
+                >
+                    {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                </button>
+            </div>
         </div>
-
-
-    )
+    );
 }
