@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Toaster } from "sonner";
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from "@/firebaseConfig";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 

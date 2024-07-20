@@ -3,19 +3,28 @@ import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 import { LoginLink, LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
 
 const logout = () => {
     sessionStorage.clear();
 };
 
 function Header({ user }) {
-    console.log(user);
+    const router = useRouter();
+
+    const handleProfileClick = () => {
+        const sessionData = sessionStorage.getItem('userProfile');
+        if (sessionData) {
+            const parsedData = JSON.parse(sessionData);
+            const profileId = parsedData.id;
+            router.push(`/profile/${profileId}`);
+        } else {
+            router.push('/not-logged-in'); // Replace with your not-logged-in route or logic
+        }
+    };
+
     const Menu = [
         { id: 1, name: "Home", path: '/' },
         { id: 2, name: "Workouts", path: '/explore' },
@@ -41,12 +50,18 @@ function Header({ user }) {
             {
                 user ?
                     <Popover>
-                        <PopoverTrigger><Image src={user.picture} alt='User' width={40} height={40} className='rounded-full' /></PopoverTrigger>
+                        <PopoverTrigger>
+                            <Image src={user.picture} alt='User' width={40} height={40} className='rounded-full' />
+                        </PopoverTrigger>
                         <PopoverContent className='w-44'>
                             <ul className='flex flex-col gap-2 items-center'>
-                                <Link href={'/dashboard'}><li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md'>Profile</li></Link>
-                                <Link href={'/my-bookings'}><li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md'>My Workouts</li></Link>
-                                <LogoutLink><li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={logout}>Logout</li></LogoutLink>
+                                <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={handleProfileClick}>Profile</li>
+                                <Link href={'/my-bookings'}>
+                                    <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md'>My Workouts</li>
+                                </Link>
+                                <LogoutLink>
+                                    <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={logout}>Logout</li>
+                                </LogoutLink>
                             </ul>
                         </PopoverContent>
                     </Popover>

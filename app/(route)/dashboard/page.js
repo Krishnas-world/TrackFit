@@ -1,7 +1,6 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import Register from './_components/Register';
-import { toast } from 'sonner';
 
 export default async function Dashboard() {
   const { isAuthenticated } = getKindeServerSession();
@@ -14,8 +13,7 @@ export default async function Dashboard() {
 
   return (
     <div>
-      <Register user={user}/>
+      <Register user={user} />
     </div>
-
-  )
+  );
 }

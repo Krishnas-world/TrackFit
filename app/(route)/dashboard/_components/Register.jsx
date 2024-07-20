@@ -10,6 +10,25 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 
+// Fitness goals dataset
+const fitnessGoals = [
+    { id: 1, goal: "Lose weight" },
+    { id: 2, goal: "Build muscle" },
+    { id: 3, goal: "Improve endurance" },
+    { id: 4, goal: "Increase flexibility" },
+    { id: 5, goal: "Enhance overall fitness" },
+    { id: 6, goal: "Increase strength" },
+    { id: 7, goal: "Tone up" },
+    { id: 8, goal: "Improve cardiovascular health" },
+    { id: 9, goal: "Gain weight" },
+    { id: 10, goal: "Prepare for a specific event" },
+    { id: 11, goal: "Improve balance" },
+    { id: 12, goal: "Reduce stress" },
+    { id: 13, goal: "Increase mobility" },
+    { id: 14, goal: "Rehabilitation and recovery" },
+    { id: 15, goal: "Achieve a personal best in a sport" }
+];
+
 export default function Register({ user }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -48,7 +67,7 @@ export default function Register({ user }) {
             setPhoto(userDoc.picture || "");
             setDocId(querySnapshot.docs[0].id);
             setProfileExists(true);
-            storeUserDataInSession(userDoc);
+            storeUserDataInSession(userDoc, querySnapshot.docs[0].id);
           } else {
             setProfileExists(false);
           }
@@ -63,8 +82,6 @@ export default function Register({ user }) {
 
   useEffect(() => {
     const isFormValid = Object.values(formData).every(value => typeof value === 'string' && value.trim() !== "");
-    console.log("Form Data:", formData); // Debugging line
-    console.log("Is Form Valid:", isFormValid); // Debugging line
     setIsButtonDisabled(!isFormValid);
   }, [formData]);
 
@@ -102,39 +119,39 @@ export default function Register({ user }) {
     }
   };
 
-const handleSave = async (e) => {
-  e.preventDefault();
-  try {
-    if (await checkPhoneNumberExists(formData.phone) && formData.phone !== formData.phone) {
-      return toast.warning("Phone number already exists. Please use a different phone number.");
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      if (await checkPhoneNumberExists(formData.phone) && formData.phone !== formData.phone) {
+        return toast.warning("Phone number already exists. Please use a different phone number.");
+      }
+  
+      const dataToSave = {
+        ...formData,
+        email: user.email,
+        picture: photo || user.picture,
+        createdAt: new Date(),
+      };
+  
+      if (profileExists) {
+        await setDoc(doc(db, "users", docId), dataToSave);
+        toast.success("Profile updated successfully!");
+      } else {
+        const newDocName = await getNextDocumentName();
+        const newDocRef = doc(db, "users", newDocName);
+        await setDoc(newDocRef, dataToSave);
+        toast.success("Profile saved successfully!");
+        setDocId(newDocName); // Update docId with new document ID
+      }
+  
+      storeUserDataInSession(dataToSave, docId);
+      router.push(`/profile/${docId}`); // Redirect to profile route with docId
+    } catch (error) {
+      console.error("Error updating document: ", error);
+      toast.error("Failed to save profile.");
     }
-
-    const dataToSave = {
-      ...formData,
-      email: user.email,
-      picture: photo || user.picture,
-      createdAt: new Date(),
-    };
-
-    if (profileExists) {
-      await setDoc(doc(db, "users", docId), dataToSave);
-      toast.success("Profile updated successfully!");
-    } else {
-      const newDocName = await getNextDocumentName();
-      const newDocRef = doc(db, "users", newDocName);
-      await setDoc(newDocRef, dataToSave);
-      toast.success("Profile saved successfully!");
-      setDocId(newDocName); // Update docId with new document ID
-    }
-    
-    storeUserDataInSession(dataToSave);
-    router.push(`/dashboard/${docId}`); // Redirect to profile route with docId
-  } catch (error) {
-    console.error("Error updating document: ", error);
-    toast.error("Failed to save profile.");
-  }
-};
-
+  };
+  
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -142,10 +159,11 @@ const handleSave = async (e) => {
     }
   };
 
-  const storeUserDataInSession = (userData) => {
+  const storeUserDataInSession = (userData, id) => {
     const expirationTime = new Date().getTime() + 7 * 24 * 60 * 60 * 1000; // 7 days from now
     const dataToStore = {
       userData,
+      id,
       expirationTime,
     };
     sessionStorage.setItem('userProfile', JSON.stringify(dataToStore));
@@ -156,7 +174,7 @@ const handleSave = async (e) => {
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       if (new Date().getTime() < parsedData.expirationTime) {
-        return parsedData.userData;
+        return parsedData;
       } else {
         sessionStorage.removeItem('userProfile');
       }
@@ -168,16 +186,16 @@ const handleSave = async (e) => {
     const sessionData = getUserDataFromSession();
     if (sessionData) {
       setFormData({
-        name: sessionData.name || "",
-        email: sessionData.email || "",
-        dob: sessionData.dob || "",
-        gender: sessionData.gender || "",
-        height: sessionData.height || "",
-        weight: sessionData.weight || "",
-        goal: sessionData.goal || "",
-        phone: sessionData.phone || "",
+        name: sessionData.userData.name || "",
+        email: sessionData.userData.email || "",
+        dob: sessionData.userData.dob || "",
+        gender: sessionData.userData.gender || "",
+        height: sessionData.userData.height || "",
+        weight: sessionData.userData.weight || "",
+        goal: sessionData.userData.goal || "",
+        phone: sessionData.userData.phone || "",
       });
-      setPhoto(sessionData.picture || "");
+      setPhoto(sessionData.userData.picture || "");
       setDocId(sessionData.id || "");
       setProfileExists(true);
     }
@@ -237,7 +255,16 @@ const handleSave = async (e) => {
 
           <div>
             <Label htmlFor="goal">Fitness Goal <span className="text-red-500">*</span></Label>
-            <Input id="goal" required name="goal" className='bg-blue-100 text-black border border-blue-400' placeholder="e.g., Lose weight, Build muscle" value={formData.goal} onChange={handleChange} />
+            <Select id="goal" name="goal" value={formData.goal} onValueChange={(value) => setFormData(prevData => ({ ...prevData, goal: value }))}>
+              <SelectTrigger className='bg-blue-100 text-black border border-blue-400'>
+                <SelectValue placeholder="Select fitness goal" />
+              </SelectTrigger>
+              <SelectContent>
+                {fitnessGoals.map((goal) => (
+                  <SelectItem key={goal.id} value={goal.goal}>{goal.goal}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
