@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function Community() {
   return (
     <div className="bg-muted rounded-lg p-4">
-      <h2 className="text-lg font-bold">Community</h2>
+      <h2 className="text-lg font-bold text-black">Community</h2>
       <div className="grid gap-4 mt-4">
         <Card>
           <CardHeader>

@@ -17,6 +17,10 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        customGray: '#212121',
+        customHoverGray: '#3d3d3d'
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

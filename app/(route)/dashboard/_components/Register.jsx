@@ -119,20 +119,33 @@ export default function Register({ user }) {
     }
   };
 
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     try {
       if (await checkPhoneNumberExists(formData.phone) && formData.phone !== formData.phone) {
         return toast.warning("Phone number already exists. Please use a different phone number.");
       }
-  
+
+      const age = calculateAge(formData.dob);
       const dataToSave = {
         ...formData,
+        age,
         email: user.email,
         picture: photo || user.picture,
         createdAt: new Date(),
       };
-  
+
       if (profileExists) {
         await setDoc(doc(db, "users", docId), dataToSave);
         toast.success("Profile updated successfully!");
@@ -143,7 +156,7 @@ export default function Register({ user }) {
         toast.success("Profile saved successfully!");
         setDocId(newDocName); // Update docId with new document ID
       }
-  
+
       storeUserDataInSession(dataToSave, docId);
       router.push(`/profile/${docId}`); // Redirect to profile route with docId
     } catch (error) {
@@ -151,7 +164,7 @@ export default function Register({ user }) {
       toast.error("Failed to save profile.");
     }
   };
-  
+
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -230,7 +243,7 @@ export default function Register({ user }) {
           </div>
 
           <div>
-            <Label htmlFor="gender">Gender</Label>
+            <Label htmlFor="gender">Gender</Label><span className="text-red-500">*</span>
             <Select id="gender" name="gender" value={formData.gender} onValueChange={(value) => setFormData(prevData => ({ ...prevData, gender: value }))}>
               <SelectTrigger className='bg-blue-100 text-black border border-blue-400'>
                 <SelectValue placeholder="Select gender" />
@@ -268,11 +281,11 @@ export default function Register({ user }) {
           </div>
 
           <div>
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">Phone Number</Label><span className="text-red-500">*</span>
             <Input id="phone" name="phone" className='bg-blue-100 text-black border border-blue-400' placeholder="Optional" value={formData.phone} onChange={handleChange} />
           </div>
 
-          <Button type="submit" disabled={isButtonDisabled} className={`mt-4 ${isButtonDisabled ? 'bg-gray-400' : 'bg-blue-500'}`}>Save</Button>
+          <Button type="submit" disabled={isButtonDisabled} className={`mt-4 ${isButtonDisabled ? 'bg-gray-400' : 'bg-blue-500'} hover:bg-blue-700`}>Save</Button>
         </div>
       </div>
     </form>

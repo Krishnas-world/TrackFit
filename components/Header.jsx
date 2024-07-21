@@ -19,7 +19,7 @@ function Header({ user }) {
         if (sessionData) {
             const parsedData = JSON.parse(sessionData);
             const profileId = parsedData.id;
-            router.push(`/profile/${profileId}`);
+            router.push(`/profile/${profileId}?tab=Profile`);
         } else {
             router.push('/dashboard'); // Replace with your not-logged-in route or logic
         }
@@ -43,7 +43,7 @@ function Header({ user }) {
     ];
 
     return (
-        <div className='flex items-center justify-between p-4 shadow-sm bg-transparent'>
+        <div className='flex items-center justify-between border-b-4 p-4 shadow-sm bg-transparent'>
             <div className='flex items-center gap-10'>
                 <Link href={'/'}>
                     <Image className='pl-4' src='/logo.svg' alt='Logo' width={60} height={60} />

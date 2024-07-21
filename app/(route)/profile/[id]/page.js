@@ -57,26 +57,26 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-1/4' : 'w-16'} bg-black text-white flex flex-col`}>
-        <button onClick={toggleSidebar} className="p-4 bg-gray-800 hover:bg-gray-700 transition duration-200">
+      <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-1/4' : 'w-16'} bg-customGray text-white flex flex-col`}>
+        <button onClick={toggleSidebar} className="p-4 bg-black hover:bg-black transition duration-200">
           {isSidebarOpen ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
         </button>
         {isSidebarOpen && (
           <nav className="p-4">
             <ul className="space-y-4">
-              <li onClick={() => handleCategoryClick('Profile')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Profile' ? 'bg-gray-700' : ''}`}>
+              <li onClick={() => handleCategoryClick('Profile')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200 ${activeCategory === 'Profile' ? 'bg-black' : ''}`}>
                 <User className="h-6 w-6 mr-3" />
                 <span>Profile</span>
               </li>
-              <li onClick={() => handleCategoryClick('My Workouts')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'My Workouts' ? 'bg-gray-700' : ''}`}>
+              <li onClick={() => handleCategoryClick('My Workouts')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200 ${activeCategory === 'My Workouts' ? 'bg-black' : ''}`}>
                 <Home className="h-6 w-6 mr-3" />
                 <span>My Workouts</span>
               </li>
-              <li onClick={() => handleCategoryClick('Progress')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Progress' ? 'bg-gray-700' : ''}`}>
+              <li onClick={() => handleCategoryClick('Progress')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200 ${activeCategory === 'Progress' ? 'bg-black' : ''}`}>
                 <BarChartBig className="h-6 w-6 mr-3" />
                 <span>Progress</span>
               </li>
-              <li onClick={() => handleCategoryClick('Community')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Community' ? 'bg-gray-700' : ''}`}>
+              <li onClick={() => handleCategoryClick('Community')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200 ${activeCategory === 'Community' ? 'bg-black' : ''}`}>
                 <Users className="h-6 w-6 mr-3" />
                 <span>Community</span>
               </li>
@@ -86,16 +86,16 @@ const DashboardLayout = () => {
         {!isSidebarOpen && (
           <nav className="p-4">
             <ul className="space-y-4">
-              <li onClick={() => handleCategoryClick('Profile')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+              <li onClick={() => handleCategoryClick('Profile')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200">
                 <User className="h-6 w-6" />
               </li>
-              <li onClick={() => handleCategoryClick('My Workouts')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+              <li onClick={() => handleCategoryClick('My Workouts')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200">
                 <Home className="h-6 w-6" />
               </li>
-              <li onClick={() => handleCategoryClick('Progress')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+              <li onClick={() => handleCategoryClick('Progress')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200">
                 <BarChartBig className="h-6 w-6" />
               </li>
-              <li onClick={() => handleCategoryClick('Community')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+              <li onClick={() => handleCategoryClick('Community')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-black transition duration-200">
                 <Users className="h-6 w-6" />
               </li>
             </ul>

@@ -6,20 +6,7 @@
     scroll-behavior: smooth;
 }
 body{
-    background-color: black;
+    background-color: rgb(18, 18, 18);
     color: white;
 }
 
-/* Custom Scrollbar Styles */
-::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
-}
-
-::-webkit-scrollbar-track {
-    background: rgb(228, 228, 228); /* Background of the scrollbar track */
-    border: 2px solid black; /* Outline color of the scrollbar track */
-}
-
-::-webkit-scrollbar-thumb {
-    background: black;
-}
