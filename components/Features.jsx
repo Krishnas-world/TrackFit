@@ -2,7 +2,7 @@
 
 export default function Features() {
   return (
-    <section className="bg-black text-white py-16">
+    <section className="bg-white text-black py-16">
       <div className="text-center">
         <h2 className="text-blue-600 text-lg">WHY CHOOSE US?</h2>
         <h1 className="text-4xl font-bold mt-2">PUSH YOUR LIMITS FORWARD</h1>

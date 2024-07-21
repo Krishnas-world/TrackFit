@@ -1,32 +1,43 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import Card from './_components/Card';
 
 const Page = () => {
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    // Retrieve user ID from session storage on the client side
+    const storedData = sessionStorage.getItem("userProfile");
+    const user = storedData ? JSON.parse(storedData) : null;
+    setUserId(user?.id || null);
+  }, []);
+
   return (
-    <div className='bg-white p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+    <div className='bg-white p-8 flex flex-row items-center gap-8'>
       <Card
-        imageSrc="https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        discountText="Save 10%"
+        imageSrc="/bg2.avif"
         title="Profile"
+        discountText="Works"
         description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet officia rem vel voluptatum in eum vitae aliquid at sed dignissimos."
-        buttonText="Learn More"
-        buttonLink=''
-      />
+        buttonText="Visit Now"
+        buttonLink={userId ? `/profile/${userId}` : '#'}  // Use the user ID to generate the link
+      />      
       <Card
-        imageSrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        discountText="Save 15%"
-        title="Rose Petal"
+        imageSrc="/bg3.avif"
+        title="Profile"
+        discountText="Doesnt work yet"
         description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet officia rem vel voluptatum in eum vitae aliquid at sed dignissimos."
-        buttonText="Discover"
-        buttonLink="#"
+        buttonText="Visit Now"
+        buttonLink={userId ? `/profile/${userId}` : '#'}  // Use the user ID to generate the link
       />
+    
       <Card
-        imageSrc="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        discountText="Save 20%"
-        title="Lavender"
+        imageSrc="/bg1.avif"
+        title="Workouts"
+        discountText="Doesnt work yet"
         description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet officia rem vel voluptatum in eum vitae aliquid at sed dignissimos."
         buttonText="Explore"
-        buttonLink="#"
+        buttonLink={`/explore`}
       />
     </div>
   );

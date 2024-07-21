@@ -25,7 +25,7 @@ const Card = ({ imageSrc, discountText, title, description, buttonText, buttonLi
         </p>
 
         <span
-          className="mt-4 block rounded-md border border-indigo-900 bg-indigo-900 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-indigo-900"
+          className="mt-4 block rounded-md border border-blue-800 bg-blue-600 px-5 py-3 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-white hover:text-indigo-900"
         >
           {buttonText}
         </span>
