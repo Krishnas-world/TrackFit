@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'; 
 import { BarChartBig, ChevronLeft, ChevronRight, Home, User, Users } from 'lucide-react';
-import ProfilePage from './profilePage';
 import MyWorkouts from './_components/MyWorkouts';
 import Progress from './_components/ProgressComp';
 import Community from './_components/Community';
+import ProfilePage from './_components/ProfilePage';
 
 const DashboardLayout = () => {
   const [activeCategory, setActiveCategory] = useState('Profile');
