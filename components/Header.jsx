@@ -21,7 +21,7 @@ function Header({ user }) {
             const profileId = parsedData.id;
             router.push(`/profile/${profileId}`);
         } else {
-            router.push('/not-logged-in'); // Replace with your not-logged-in route or logic
+            router.push('/dashboard'); // Replace with your not-logged-in route or logic
         }
     };
 
