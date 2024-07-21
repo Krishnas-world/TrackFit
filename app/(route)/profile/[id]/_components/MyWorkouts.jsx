@@ -450,7 +450,7 @@ export default function FitnessDashboard() {
               </DialogTitle>
               <DialogContent>
                 <p style={{ fontSize: '1.2rem', textAlign: 'center', color: '#333' }}>
-                  {congratsMessage} 🎊 You're doing an amazing job! Keep up the great work and stay motivated. 💪✨
+                  {congratsMessage} 🎊 You are doing an amazing job! Keep up the great work and stay motivated. 💪✨
                 </p>
                 <div className="flex justify-center mt-4">
                   <Button onClick={() => setShowCongratsDialog(false)} style={{ backgroundColor: '#4CAF50', color: 'white' }}>

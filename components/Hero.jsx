@@ -33,7 +33,7 @@ export default function Hero() {
                     
                     className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 md:p-12"
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">It's Time to Regain Your Fitness</h1>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Its Time to Regain Your Fitness</h1>
                     <p className="text-muted-foreground mb-6">Do fitness anywhere and anytime with our training videos</p>
                     <Button className='bg-white bg-opacity-80 text-black px-6 py-3 rounded-lg hover:bg-primary/80' >
                         Explore Now!

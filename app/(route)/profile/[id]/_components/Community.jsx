@@ -27,7 +27,7 @@ export default function Community() {
           <CardHeader>
             <CardTitle>Workout of the Day</CardTitle>
             <CardDescription>
-              Check out today's recommended workout and share your progress!
+              Check out todays recommended workout and share your progress!
             </CardDescription>
           </CardHeader>
           <CardContent>
