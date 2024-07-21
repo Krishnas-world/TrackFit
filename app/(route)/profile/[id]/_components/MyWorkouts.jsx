@@ -34,6 +34,11 @@ export default function FitnessDashboard() {
   const [congratsMessage, setCongratsMessage] = useState("");
   const [showCongratsDialog, setShowCongratsDialog] = useState(false); // State to control the visibility of the congrats dialog
 
+  const [reminderDate, setReminderDate] = useState("");
+  const [reminderTime, setReminderTime] = useState("");
+  const [reminders, setReminders] = useState([]);
+  
+
   const exerciseTypes = [
     "Strength Training", "Cardio", "Yoga", "Pilates", "Stretching",
     "HIIT", "Cycling", "Swimming", "Push-ups", "Squats", "Lunges",
@@ -78,6 +83,13 @@ export default function FitnessDashboard() {
           getDocs(goalsCollection).then((querySnapshot) => {
             const fetchedGoals = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setGoals(fetchedGoals);
+          });
+
+          // Fetch reminders
+          const remindersCollection = collection(db, "users", userId, "reminders");
+          getDocs(remindersCollection).then((querySnapshot) => {
+            const fetchedReminders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setReminders(fetchedReminders);
           });
         } else {
           setUserExists(false);
@@ -221,18 +233,93 @@ export default function FitnessDashboard() {
     }
   };
 
+  const handleSetReminder = async (e) => {
+    e.preventDefault();
+    if (!reminderDate || !reminderTime) {
+      toast.error("Please select both date and time for the reminder.");
+      return;
+    }
+  
+    const storedData = JSON.parse(sessionStorage.getItem("userProfile"));
+    const userId = storedData ? storedData.id : null;
+  
+    if (userId && userExists) {
+      const reminderData = {
+        date: reminderDate,
+        time: reminderTime,
+        userId: userId,
+      };
+  
+      try {
+        const reminderDocRef = doc(collection(db, "users", userId, "reminders"));
+        await setDoc(reminderDocRef, reminderData);
+  
+        setReminders(prevReminders => [...prevReminders, { id: reminderDocRef.id, ...reminderData }]);
+        toast.success("Reminder set successfully!");
+        setReminderDate("");
+        setReminderTime("");
+  
+        // Display a browser notification
+        if (Notification.permission === "granted") {
+          new Notification("Reminder Set", {
+            body: `Reminder set for ${reminderDate} at ${reminderTime}.`,
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              new Notification("Reminder Set", {
+                body: `Reminder set for ${reminderDate} at ${reminderTime}.`,
+              });
+            }
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to set reminder. Please try again.");
+      }
+    }
+  };
+  
+
   const filteredExerciseTypes = exerciseTypes.filter(type =>
     type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-<div className="bg-muted rounded-lg p-4 space-y-6">
+    <div className="bg-muted rounded-lg p-4 space-y-6">
       {showConfetti && (
         <Confetti
           recycle={false}
           onConfettiComplete={() => setShowConfetti(false)}
         />
       )}
+
+      <h1 className="text-black font-bold mb-4">Fitness Dashboard</h1>
+
+      {/* Reminder Section */}
+      <form onSubmit={handleSetReminder} className="space-y-4 text-black mb-6">
+        <h2 className="text-lg font-bold mb-2">Set Reminder</h2>
+        <div>
+          <Label htmlFor="reminderDate">Reminder Date</Label>
+          <Input
+            type="date"
+            id="reminderDate"
+            value={reminderDate}
+            onChange={(e) => setReminderDate(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="reminderTime">Reminder Time</Label>
+          <Input
+            type="time"
+            id="reminderTime"
+            value={reminderTime}
+            onChange={(e) => setReminderTime(e.target.value)}
+            required
+          />
+        </div>
+        <Button type="submit">Set Reminder</Button>
+      </form>
 
       <h1 className="text-black font-bold mb-4">Workout Log</h1>
 
@@ -358,23 +445,43 @@ export default function FitnessDashboard() {
             <Progress value={goal.progress} className="mb-2 text-black" />
             <p>Progress: {goal.progress}%</p>
             <Dialog open={showCongratsDialog} onOpenChange={(open) => !open && setShowCongratsDialog(false)}>
-        <DialogTitle className='text-black text-center' style={{ backgroundColor: '#4CAF50', color: 'white', padding: '16px', borderRadius: '8px' }}>
-          🎉 Congratulations! 🎉
-        </DialogTitle>
-        <DialogContent>
-          <p style={{ fontSize: '1.2rem', textAlign: 'center', color: '#333' }}>
-            {congratsMessage} 🎊 You're doing an amazing job! Keep up the great work and stay motivated. 💪✨
-          </p>
-          <div className="flex justify-center mt-4">
-            <Button onClick={() => setShowCongratsDialog(false)} style={{ backgroundColor: '#4CAF50', color: 'white' }}>
-              Close
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+              <DialogTitle className='text-black text-center' style={{ backgroundColor: '#4CAF50', color: 'white', padding: '16px', borderRadius: '8px' }}>
+                🎉 Congratulations! 🎉
+              </DialogTitle>
+              <DialogContent>
+                <p style={{ fontSize: '1.2rem', textAlign: 'center', color: '#333' }}>
+                  {congratsMessage} 🎊 You're doing an amazing job! Keep up the great work and stay motivated. 💪✨
+                </p>
+                <div className="flex justify-center mt-4">
+                  <Button onClick={() => setShowCongratsDialog(false)} style={{ backgroundColor: '#4CAF50', color: 'white' }}>
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       ))}
+
+      {reminders.length > 0 && (
+        <div className="mt-6 p-4 bg-white rounded-lg">
+          <h2 className="text-lg font-bold text-black mb-2">Reminders</h2>
+          {reminders.map((reminder) => {
+            const reminderDateTime = new Date(`${reminder.date}T${reminder.time}`);
+            const now = new Date();
+            if (now < reminderDateTime) {
+              return (
+                <div key={reminder.id} className="p-2 mb-2 text-black rounded-lg">
+                  <p>
+                    Reminder set for: {reminder.date} {reminder.time}
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      )}
     </div>
   );
 }
