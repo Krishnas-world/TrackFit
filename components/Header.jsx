@@ -25,6 +25,17 @@ function Header({ user }) {
         }
     };
 
+    const handleMyWorkoutsClick = () => {
+        const sessionData = sessionStorage.getItem('userProfile');
+        if (sessionData) {
+            const parsedData = JSON.parse(sessionData);
+            const profileId = parsedData.id;
+            router.push(`/profile/${profileId}?tab=my-workouts`);
+        } else {
+            router.push('/dashboard'); // Replace with your not-logged-in route or logic
+        }
+    };
+
     const Menu = [
         { id: 1, name: "Home", path: '/' },
         { id: 2, name: "Workouts", path: '/explore' },
@@ -56,9 +67,7 @@ function Header({ user }) {
                         <PopoverContent className='w-44'>
                             <ul className='flex flex-col gap-2 items-center'>
                                 <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={handleProfileClick}>Profile</li>
-                                <Link href={'/my-bookings'}>
-                                    <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md'>My Workouts</li>
-                                </Link>
+                                <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={handleMyWorkoutsClick}>My Workouts</li>
                                 <LogoutLink>
                                     <li className='cursor-pointer hover:bg-slate-200 p-2 rounded-md' onClick={logout}>Logout</li>
                                 </LogoutLink>

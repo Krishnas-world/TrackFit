@@ -1,86 +1,112 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { db } from '@/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import Content from '../_components/Content';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation'; 
+import { BarChartBig, ChevronLeft, ChevronRight, Home, User, Users } from 'lucide-react';
+import ProfilePage from './profilePage';
+import MyWorkouts from './_components/MyWorkouts';
+import Progress from './_components/ProgressComp';
+import Community from './_components/Community';
 
-const ProfilePage = () => {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { id } = useParams(); // Get the `id` from the URL using useParams
+const DashboardLayout = () => {
+  const [activeCategory, setActiveCategory] = useState('Profile');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab');
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (id) {
-        try {
-          const docRef = doc(db, 'users', id);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            setProfile(docSnap.data());
-          } else {
-            console.error("No such document!");
-          }
-        } catch (error) {
-          console.error("Error fetching document: ", error);
-        } finally {
-          setLoading(false);
-        }
+    if (tab) {
+      switch (tab) {
+        case 'my-workouts':
+          setActiveCategory('My Workouts');
+          break;
+        case 'progress':
+          setActiveCategory('Progress');
+          break;
+        case 'community':
+          setActiveCategory('Community');
+          break;
+        default:
+          setActiveCategory('Profile');
+          break;
       }
-    };
+    }
+  }, [tab]);
 
-    fetchProfile();
-  }, [id]);
-
-  const router = useRouter();
-
-  const handleEditClick = () => {
-    toast.warning("Please wait as we redirect you to update your profile");
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 2000);
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
-  if (!profile) {
-    return <div>No profile found.</div>;
-  }
+  const renderContent = () => {
+    switch (activeCategory) {
+      case 'Profile':
+        return <ProfilePage />;
+      case 'My Workouts':
+        return <MyWorkouts />;
+      case 'Progress':
+        return <Progress />;
+      case 'Community':
+        return <Community />;
+      default:
+        return <ProfilePage />;
+    }
+  };
 
   return (
-    <div className="p-8">
-      <div className="bg-white border-[1px] text-gray-900 rounded-xl shadow-lg w-full md:max-w-2xl mx-auto p-6 m-4">
-        <div className="flex items-center space-x-4">
-          <Image src={profile.picture || '/default-profile.png'} alt="Profile photo" width={100} height={100} className="rounded-full border border-gray-300" />
-          <div>
-            <h2 className="text-xl font-bold">{profile.name}</h2>
-            <p className="text-sm text-gray-600">{profile.email}</p>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-indigo-500">Profile Details</h3>
-          <p className="mt-2 text-gray-600"><strong>Date of Birth:</strong> {profile.dob}</p>
-          <p className="mt-2 text-gray-600"><strong>Gender:</strong> {profile.gender}</p>
-          <p className="mt-2 text-gray-600"><strong>Height:</strong> {profile.height} cm</p>
-          <p className="mt-2 text-gray-600"><strong>Weight:</strong> {profile.weight} kg</p>
-          <p className="mt-2 text-gray-600"><strong>Fitness Goal:</strong> {profile.goal}</p>
-          <p className="mt-2 text-gray-600"><strong>Phone Number:</strong> {profile.phone || 'Not provided'}</p>
-        </div>
-        <Button className='bg-indigo-500 text-white mt-4 hover:bg-indigo-700' onClick={handleEditClick}>Edit Profile</Button>
+    <div className="flex min-h-screen bg-gray-100">
+      <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-1/4' : 'w-16'} bg-black text-white flex flex-col`}>
+        <button onClick={toggleSidebar} className="p-4 bg-gray-800 hover:bg-gray-700 transition duration-200">
+          {isSidebarOpen ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
+        </button>
+        {isSidebarOpen && (
+          <nav className="p-4">
+            <ul className="space-y-4">
+              <li onClick={() => handleCategoryClick('Profile')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Profile' ? 'bg-gray-700' : ''}`}>
+                <User className="h-6 w-6 mr-3" />
+                <span>Profile</span>
+              </li>
+              <li onClick={() => handleCategoryClick('My Workouts')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'My Workouts' ? 'bg-gray-700' : ''}`}>
+                <Home className="h-6 w-6 mr-3" />
+                <span>My Workouts</span>
+              </li>
+              <li onClick={() => handleCategoryClick('Progress')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Progress' ? 'bg-gray-700' : ''}`}>
+                <BarChartBig className="h-6 w-6 mr-3" />
+                <span>Progress</span>
+              </li>
+              <li onClick={() => handleCategoryClick('Community')} className={`flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200 ${activeCategory === 'Community' ? 'bg-gray-700' : ''}`}>
+                <Users className="h-6 w-6 mr-3" />
+                <span>Community</span>
+              </li>
+            </ul>
+          </nav>
+        )}
+        {!isSidebarOpen && (
+          <nav className="p-4">
+            <ul className="space-y-4">
+              <li onClick={() => handleCategoryClick('Profile')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+                <User className="h-6 w-6" />
+              </li>
+              <li onClick={() => handleCategoryClick('My Workouts')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+                <Home className="h-6 w-6" />
+              </li>
+              <li onClick={() => handleCategoryClick('Progress')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+                <BarChartBig className="h-6 w-6" />
+              </li>
+              <li onClick={() => handleCategoryClick('Community')} className="flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-700 transition duration-200">
+                <Users className="h-6 w-6" />
+              </li>
+            </ul>
+          </nav>
+        )}
       </div>
-      <div>
-        <Content/>
+      <div className="flex-1 p-8">
+        {renderContent()}
       </div>
     </div>
   );
 };
 
-export default ProfilePage;
+export default DashboardLayout;
