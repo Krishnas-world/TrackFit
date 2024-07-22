@@ -1,8 +1,8 @@
-# FitTrack - Your Personalized Fitness Companion
+# TrackFit - Your Personalized Fitness Companion
 
-![FitTrack Preview](./bg.png)
+![TrackFit Preview](./bg.png)
 
-💪 **Track, Log, and Achieve Your Fitness Goals with Ease.** FitTrack helps you stay on top of your workouts, goals, and achievements. Whether you're looking to log your exercises, set new fitness goals, or track your progress, FitTrack has you covered.
+💪 **Track, Log, and Achieve Your Fitness Goals with Ease.** TrackFit helps you stay on top of your workouts, goals, and achievements. Whether you're looking to log your exercises, set new fitness goals, or track your progress, FitTrack has you covered.
 
 ## ✨ Features
 - **🏋️ Workout Logging:** Effortlessly log your workouts including type, duration, and notes.
