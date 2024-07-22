@@ -12,21 +12,21 @@ import { useRouter } from 'next/navigation';
 
 // Fitness goals dataset
 const fitnessGoals = [
-    { id: 1, goal: "Lose weight" },
-    { id: 2, goal: "Build muscle" },
-    { id: 3, goal: "Improve endurance" },
-    { id: 4, goal: "Increase flexibility" },
-    { id: 5, goal: "Enhance overall fitness" },
-    { id: 6, goal: "Increase strength" },
-    { id: 7, goal: "Tone up" },
-    { id: 8, goal: "Improve cardiovascular health" },
-    { id: 9, goal: "Gain weight" },
-    { id: 10, goal: "Prepare for a specific event" },
-    { id: 11, goal: "Improve balance" },
-    { id: 12, goal: "Reduce stress" },
-    { id: 13, goal: "Increase mobility" },
-    { id: 14, goal: "Rehabilitation and recovery" },
-    { id: 15, goal: "Achieve a personal best in a sport" }
+  { id: 1, goal: "Lose weight" },
+  { id: 2, goal: "Build muscle" },
+  { id: 3, goal: "Improve endurance" },
+  { id: 4, goal: "Increase flexibility" },
+  { id: 5, goal: "Enhance overall fitness" },
+  { id: 6, goal: "Increase strength" },
+  { id: 7, goal: "Tone up" },
+  { id: 8, goal: "Improve cardiovascular health" },
+  { id: 9, goal: "Gain weight" },
+  { id: 10, goal: "Prepare for a specific event" },
+  { id: 11, goal: "Improve balance" },
+  { id: 12, goal: "Reduce stress" },
+  { id: 13, goal: "Increase mobility" },
+  { id: 14, goal: "Rehabilitation and recovery" },
+  { id: 15, goal: "Achieve a personal best in a sport" }
 ];
 
 export default function Register({ user }) {
@@ -68,6 +68,7 @@ export default function Register({ user }) {
             setDocId(querySnapshot.docs[0].id);
             setProfileExists(true);
             storeUserDataInSession(userDoc, querySnapshot.docs[0].id);
+            router.push(`/profile/${querySnapshot.docs[0].id}`); // Redirect to profile
           } else {
             setProfileExists(false);
           }
@@ -214,6 +215,12 @@ export default function Register({ user }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (!profileExists && user) {
+      router.push('/dashboard'); // Redirect to dashboard for new users
+    }
+  }, [profileExists, user, router]);
+
   return (
     <form onSubmit={handleSave} className="p-8">
       <div className="bg-card border-[1px] text-card-foreground rounded-lg w-auto mx-auto p-6 m-4">
@@ -229,23 +236,41 @@ export default function Register({ user }) {
           {/* Form Fields */}
           <div>
             <Label htmlFor="name">Name <span className="text-red-500">*</span></Label>
-            <Input id="name" required name="name" className='bg-blue-100 text-black border border-blue-400' placeholder="John Doe" value={formData.name} onChange={handleChange} />
-          </div>
-
-          <div>
-            <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
-            <Input id="email" required name="email" className='bg-blue-100 text-black border border-blue-400' placeholder="example@domain.com" value={formData.email} onChange={handleChange} disabled />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="dob">Date of Birth <span className="text-red-500">*</span></Label>
-            <Input id="dob" required name="dob" className='bg-blue-100 text-black border border-blue-400' type="date" value={formData.dob} onChange={handleChange} />
+            <Input
+              id="dob"
+              name="dob"
+              type="date"
+              value={formData.dob}
+              onChange={handleChange}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            />
           </div>
 
           <div>
-            <Label htmlFor="gender">Gender</Label><span className="text-red-500">*</span>
-            <Select id="gender" name="gender" value={formData.gender} onValueChange={(value) => setFormData(prevData => ({ ...prevData, gender: value }))}>
-              <SelectTrigger className='bg-blue-100 text-black border border-blue-400'>
+            <Label htmlFor="gender">Gender <span className="text-red-500">*</span></Label>
+            <Select
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onValueChange={(value) => setFormData(prevData => ({ ...prevData, gender: value }))}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            >
+              <SelectTrigger className='text-black border border-blue-400 bg-blue-100'>
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -258,22 +283,45 @@ export default function Register({ user }) {
 
           <div>
             <Label htmlFor="height">Height (cm) <span className="text-red-500">*</span></Label>
-            <Input id="height" required name="height" className='bg-blue-100 text-black border border-blue-400' type="number" value={formData.height} onChange={handleChange} />
+            <Input
+              id="height"
+              name="height"
+              type="number"
+              value={formData.height}
+              onChange={handleChange}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="weight">Weight (kg) <span className="text-red-500">*</span></Label>
-            <Input id="weight" required name="weight" className='bg-blue-100 text-black border border-blue-400' type="number" value={formData.weight} onChange={handleChange} />
+            <Input
+              id="weight"
+              name="weight"
+              type="number"
+              value={formData.weight}
+              onChange={handleChange}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="goal">Fitness Goal <span className="text-red-500">*</span></Label>
-            <Select id="goal" name="goal" value={formData.goal} onValueChange={(value) => setFormData(prevData => ({ ...prevData, goal: value }))}>
-              <SelectTrigger className='bg-blue-100 text-black border border-blue-400'>
-                <SelectValue placeholder="Select fitness goal" />
+            <Select
+              id="goal"
+              name="goal"
+              value={formData.goal}
+              onValueChange={(value) => setFormData(prevData => ({ ...prevData, goal: value }))}
+              className='bg-blue-100 text-black border border-blue-400'
+              required
+            >
+              <SelectTrigger className='text-black border border-blue-400 bg-blue-100'>
+                <SelectValue placeholder="Select goal" />
               </SelectTrigger>
               <SelectContent>
-                {fitnessGoals.map((goal) => (
+                {fitnessGoals.map(goal => (
                   <SelectItem key={goal.id} value={goal.goal}>{goal.goal}</SelectItem>
                 ))}
               </SelectContent>
@@ -281,12 +329,18 @@ export default function Register({ user }) {
           </div>
 
           <div>
-            <Label htmlFor="phone">Phone Number</Label><span className="text-red-500">*</span>
-            <Input id="phone" name="phone" className='bg-blue-100 text-black border border-blue-400' placeholder="Optional" value={formData.phone} onChange={handleChange} />
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              className='bg-blue-100 text-black border border-blue-400'
+            />
           </div>
-
-          <Button type="submit" disabled={isButtonDisabled} className={`mt-4 ${isButtonDisabled ? 'bg-gray-400' : 'bg-blue-500'} hover:bg-blue-700`}>Save</Button>
         </div>
+        <Button type="submit" disabled={isButtonDisabled} className={`mt-4 ${isButtonDisabled ? 'bg-gray-400' : 'bg-blue-500'} hover:bg-blue-700`}>Save</Button>
       </div>
     </form>
   );
